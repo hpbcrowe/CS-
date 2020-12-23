@@ -1,0 +1,402 @@
+SQL> 
+SQL> -- Enter code below.
+SQL> -- ------------------------------------------------------------------
+SQL> /***********************************
+SQL> Step 1
+SQL> Using the following ERD to write a query that returns the unique member_id column value from a join
+SQL> between the member and contact table in the SELECT-list. Join the member and contact table by using
+SQL> the member_id columns form both tables. Filter the results in the WHERE clause by checking whether
+SQL> from the last_name column value is a 'Sweeney' string literal. (HINT: Use the DISTINCT operator.)
+SQL> ***********************************/
+SQL> SET PAGESIZE 99
+SQL> COL member_id FORMAT 9999 HEADING "Member|ID #"
+SQL> SELECT DISTINCT member.member_id
+  2  FROM member
+  3  INNER JOIN contact
+  4  ON member.member_id = contact.member_id
+  5  WHERE last_name = 'Sweeney';
+
+Member                                                                          
+  ID #                                                                          
+------                                                                          
+  1003                                                                          
+
+1 row selected.
+
+SQL> 
+SQL> /************************************
+SQL> Step 2
+SQL> Using the following ERD to write a query that returns the non-unique last_name, account_number,
+SQL> and credit_card_number column values from a join between the contact and member tables. Join the
+SQL> member and contact table by using the member_id columns form both tables. Filter the results in the
+SQL> WHERE clause by checking whether from the last_name column value is a case insensitive 'SWEENEY'
+SQL> string. (HINT: You need to promote the contents of the last_name column to uppercase before making
+SQL> the comparison.)
+SQL> ************************************/
+SQL> COL last_name	    FORMAT A10 HEADING "Last Name"
+SQL> COL account_number     FORMAT A10 HEADING "Account|Number"
+SQL> COL credit_card_number FORMAT A19 HEADING "Credit Card Number"
+SQL> SELECT contact.last_name, member.account_number, member.credit_card_number
+  2  FROM contact
+  3  INNER JOIN member
+  4  ON contact.member_id = member.member_id
+  5  WHERE UPPER(contact.last_name) LIKE 'SWEENEY';
+
+           Account                                                              
+Last Name  Number     Credit Card Number                                        
+---------- ---------- -------------------                                       
+Sweeney    B293-71447 3333-4444-5555-6666                                       
+Sweeney    B293-71447 3333-4444-5555-6666                                       
+Sweeney    B293-71447 3333-4444-5555-6666                                       
+
+3 rows selected.
+
+SQL> 
+SQL> /**************************************
+SQL>  Step 3
+SQL>  Using the following ERD, write a query, that returns the unique last_name, account_number, and
+SQL> credit_card_number column values from a join between the contact and member tables. Join the
+SQL> member and contact table by using the member_id columns form both tables. Filter the results in the
+SQL> WHERE clause by checking whether from the last_name column value is a case insensitive 'SWEENEY'
+SQL> string. (HINT: You should use the DISTINCT operator.)
+SQL> 
+SQL> **************************************/
+SQL> COL last_name	    FORMAT A10 HEADING "Last Name"
+SQL> COL account_number     FORMAT A10 HEADING "Account|Number"
+SQL> COL credit_card_number FORMAT A19 HEADING "Credit Card Number"
+SQL> SELECT DISTINCT contact.last_name, member.account_number, member.credit_card_number
+  2  FROM contact
+  3  INNER JOIN member
+  4  ON contact.member_id = member.member_id
+  5  WHERE UPPER(contact.last_name) LIKE 'SWEENEY';
+
+           Account                                                              
+Last Name  Number     Credit Card Number                                        
+---------- ---------- -------------------                                       
+Sweeney    B293-71447 3333-4444-5555-6666                                       
+
+1 row selected.
+
+SQL> 
+SQL> /**************************************
+SQL> Step 4
+SQL> Using the following ERD to write a query that returns the unique last_name, account_number,
+SQL> credit_card_number column values, and a single column concatenated from the city ,
+SQL> state_province, and postal_code column values. Use a city_address alias for the concatenated
+SQL> column values, with this format: city, state zip.
+SQL> Join the member and contact table by using the member_id columns form both tables; and the result of
+SQL> the first join to the address table by using the contact_id column found in the contact and address
+SQL> tables. Concatenate the column values with the double pipe concatenation operator (||). Filter the
+SQL> results in the WHERE clause with a case sensitive 'Vizquel' string. (HINT: Use the DISTINCT operator to
+SQL> reduce the rows to a unique row set.)
+SQL> CONCAT(CONCAT(CONCAT(CONCAT('(',telephone.area_code),')'),' '), telephone.telephone_number)
+SQL> AS telphone
+SQL> **************************************/
+SQL> COL last_name	    FORMAT A10 HEADING "Last Name"
+SQL> COL account_number     FORMAT A10 HEADING "Account|Number"
+SQL> COL credit_card_number FORMAT A19 HEADING "Credit Card Number"
+SQL> COL address	    FORMAT A22 HEADING "Address"
+SQL> SELECT DISTINCT contact.last_name, member.account_number, member.credit_card_number,
+  2  address.city || ',' || address.state_province || ' ' || address.postal_code AS
+  3  city_address
+  4  FROM ((contact
+  5  INNER JOIN member ON contact.member_id = member.member_id)
+  6  INNER JOIN address ON contact.contact_id = address.contact_id)
+  7  WHERE last_name LIKE 'Vizquel';
+
+           Account                                                              
+Last Name  Number     Credit Card Number                                        
+---------- ---------- -------------------                                       
+CITY_ADDRESS                                                                    
+--------------------------------------------------------------------------------
+Vizquel    B293-71446 2222-3333-4444-5555                                       
+San Jose,CA 95192                                                               
+                                                                                
+
+1 row selected.
+
+SQL> 
+SQL> /************************************
+SQL> Step 5
+SQL> Using the following ERD to write a query that returns three individual columns and one dynamically
+SQL> built column through concatenation. The first three columns in the SELECT-list are the last_name,
+SQL> column from the contact table, and the account_number and credit_card_number columns from the
+SQL> member table. You create the fourth column by concatenating the street_address column from the
+SQL> street_address table and the city, state_province, and postal_code columns from the address
+SQL> table. Assign c_address as a column alias to the concatenated column, which should display like:
+SQL>  c_address
+SQL> ---------------------
+SQL> 12 El Camino Real +
+SQL> San Jose, CA 95192
+SQL> Join the member table to the contact table, the contact table to the address table, and the address
+SQL> table to the street_address with their respective primary and foreign key column values. Filter the
+SQL> return set of rows by using the last_name column value where it matches a case sensitive 'Vizquel'
+SQL> string. Data science often requires encoding these hybrid-type return values in single or double quotes at
+SQL> the end of any line of text. A utility like Linux’s or macOS’s sed to replace the + symbol with a white
+SQL> space. The Windows OS requires the use of .NET programming elements or a Node.js solution.
+SQL> ************************************/
+SQL> COL last_name	    FORMAT A12 HEADING "Last Name"
+SQL> COL account_number     FORMAT A10 HEADING "Account|Number"
+SQL> COL credit_card_number FORMAT A19 HEADING "Credit Card Number"
+SQL> COL c_address	    FORMAT A22 HEADING "Address"
+SQL> SELECT DISTINCT contact.last_name, member.account_number, member.credit_card_number,
+  2  street_address.street_address || chr(10) ||
+  3  address.city || ',' || address.state_province || ' ' || address.postal_code AS
+  4  c_address
+  5  FROM (((contact
+  6  INNER JOIN member ON contact.member_id = member.member_id)
+  7  INNER JOIN address ON contact.contact_id = address.contact_id)
+  8  INNER JOIN street_address ON address.address_id = street_address.address_id)
+  9  WHERE last_name LIKE 'Vizquel';
+
+             Account                                                            
+Last Name    Number     Credit Card Number  Address                             
+------------ ---------- ------------------- ----------------------              
+Vizquel      B293-71446 2222-3333-4444-5555 12 El Camino Real                   
+                                            San Jose,CA 95192                   
+                                                                                
+
+1 row selected.
+
+SQL> 
+SQL> /*************************************
+SQL> Step 6
+SQL> Using the following ERD to write a query that returns three individual columns and one dynamically
+SQL> built column through concatenation. The first two columns in the SELECT-list are the last_name,
+SQL> column from the contact table and the account_number column from the member table. You create the
+SQL> third column by concatenating the street_address column from the street_address table and the
+SQL> city, state_province, and postal_code columns from the address table. Assign c_address as a
+SQL> column alias to the concatenated column, which should display like:
+SQL>  c_address
+SQL> ---------------------
+SQL> 12 El Camino Real +
+SQL> San Jose, CA 95192
+SQL> The fourth column should be a formatted telephone number from the area_code and
+SQL> telephone_number columns from the telephone table. It should have this format: (999) 999-9999.
+SQL> Join the member table to the contact table, the contact table to the address table, the address table to
+SQL> the street_address , and the contact table to the telephone table with their respective primary and
+SQL> foreign key column values. Filter the return set of rows by using the last_name column value where it
+SQL> matches a case sensitive 'Vizquel' string
+SQL> *************************************/
+SQL> COL last_name	    FORMAT A12 HEADING "Last Name"
+SQL> COL account_number     FORMAT A10 HEADING "Account|Number"
+SQL> COL c_address	    FORMAT A18 HEADING "Address"
+SQL> COL telephone	    FORMAT A14 HEADING "Telephone"
+SQL> SELECT DISTINCT contact.last_name, member.account_number,
+  2  street_address.street_address ||chr(10) ||
+  3  address.city || ',' || address.state_province || ' ' || address.postal_code AS
+  4  c_address, CONCAT(CONCAT(CONCAT(CONCAT('(',telephone.area_code),')'),' '), telephone.telephone_number) AS telphone
+  5  FROM ((((contact
+  6  INNER JOIN member ON contact.member_id = member.member_id)
+  7  INNER JOIN address ON contact.contact_id = address.contact_id)
+  8  INNER JOIN street_address ON address.address_id = street_address.address_id)
+  9  INNER JOIN telephone ON contact.contact_id = telephone.contact_id)
+ 10  WHERE last_name LIKE 'Vizquel';
+
+             Account                                                            
+Last Name    Number     Address            TELPHONE                             
+------------ ---------- ------------------ -------------------                  
+Vizquel      B293-71446 12 El Camino Real  (408) 222-2222                       
+                        San Jose,CA 95192                                       
+                                                                                
+
+1 row selected.
+
+SQL> 
+SQL> /************************************
+SQL> Step 7
+SQL> Using the prior ERD from Step #7 re-write the query, to return all 8 member accounts. You simply need
+SQL> to remove the WHERE clause from the Step #6 query
+SQL> ************************************/
+SQL> COL last_name	FORMAT A12 HEADING "Last Name"
+SQL> COL account_number FORMAT A10 HEADING "Account|Number"
+SQL> COL c_address	FORMAT A24 HEADING "Address"
+SQL> COL telephone	FORMAT A14 HEADING "Telephone"
+SQL> SELECT DISTINCT contact.last_name, member.account_number,street_address.street_address || chr(10) ||address.city || ',' || address.state_province || ' ' || address.postal_code AS c_address, '(' || telephone.area_code || ')' || telephone.telephone_number  AS Telephone
+  2  FROM ((((contact
+  3  INNER JOIN member ON contact.member_id = member.member_id)
+  4  INNER JOIN address ON contact.contact_id = address.contact_id)
+  5  INNER JOIN street_address ON address.address_id = street_address.address_id)
+  6  INNER JOIN telephone ON contact.contact_id = telephone.contact_id)
+  7  ORDER BY last_name;
+
+             Account                                                            
+Last Name    Number     Address                  Telephone                      
+------------ ---------- ------------------------ --------------                 
+Clinton      R11-514-34 118 South 9th East       (801)423-1234                  
+                        Provo,Utah 84606                                        
+                                                                                
+Gretelz      R11-514-36 2118 South 7th East      (801)423-1236                  
+                        Provo,Utah 84606                                        
+                                                                                
+Moss         R11-514-35 1218 South 10th East     (801)423-1235                  
+                        Provo,Utah 84606                                        
+                                                                                
+Royal        R11-514-37 2228 South 14th East     (801)423-1237                  
+                        Provo,Utah 84606                                        
+                                                                                
+Smith        R11-514-38 333 North 2nd East       (801)423-1238                  
+                        Spanish Fork,Utah 84606                                 
+                                                                                
+Sweeney      B293-71447 14 El Camino Real        (408)333-3333                  
+                        San Jose,CA 95192                                       
+                                                                                
+Vizquel      B293-71446 12 El Camino Real        (408)222-2222                  
+                        San Jose,CA 95192                                       
+                                                                                
+Winn         B293-71445 10 El Camino Real        (408)111-1111                  
+                        San Jose,CA 95192                                       
+                                                                                
+
+8 rows selected.
+
+SQL> 
+SQL> /************************************
+SQL> Step 8
+SQL> Using the following ERD to write a query that returns same set of columns as Step #6 and Step #7 but
+SQL> returns only rows where all membership accounts have rentals. Join the member table to the contact
+SQL> table, the contact table to the address table, the address table to the street_address , the contact
+SQL> table to the telephone table, and the contact table to the rental table with their respective primary
+SQL> and foreign key column values. Primary and foreign key columns share the same column name with one
+SQL> exception. The customer_id foreign key column of the rental table points to the contact_id primary
+SQL> key of the contact table.
+SQL> 
+SQL> ************************************/
+SQL> COL last_name	FORMAT A12 HEADING "Last Name"
+SQL> COL account_number FORMAT A10 HEADING "Account|Number"
+SQL> COL c_address	FORMAT A24 HEADING "Address"
+SQL> COL telephone	FORMAT A14 HEADING "Telephone"
+SQL> SELECT DISTINCT contact.last_name, member.account_number,street_address.street_address || chr(10) ||
+  2  address.city || ',' || address.state_province || ' ' || address.postal_code AS
+  3  c_address, '(' || telephone.area_code || ')' || telephone.telephone_number  AS Telephone
+  4  FROM (((((contact
+  5  INNER JOIN member ON contact.member_id = member.member_id)
+  6  INNER JOIN address ON contact.contact_id = address.contact_id)
+  7  INNER JOIN street_address ON address.address_id = street_address.address_id)
+  8  INNER JOIN telephone ON contact.contact_id = telephone.contact_id)
+  9  RIGHT JOIN rental ON contact.contact_id = rental.customer_id)
+ 10  WHERE rental.check_out_date IS NOT NULL
+ 11  ORDER BY last_name;
+
+             Account                                                            
+Last Name    Number     Address                  Telephone                      
+------------ ---------- ------------------------ --------------                 
+Sweeney      B293-71447 14 El Camino Real        (408)333-3333                  
+                        San Jose,CA 95192                                       
+                                                                                
+Vizquel      B293-71446 12 El Camino Real        (408)222-2222                  
+                        San Jose,CA 95192                                       
+                                                                                
+Winn         B293-71445 10 El Camino Real        (408)111-1111                  
+                        San Jose,CA 95192                                       
+                                                                                
+
+3 rows selected.
+
+SQL> 
+SQL> /*********************************************
+SQL> Step 9
+SQL> Using the ERD from Step #8, write a query that returns same set of columns as Step #6 and Step #7 but
+SQL> returns only rows where all membership accounts have no rentals. Join the member table to the contact
+SQL> table, the contact table to the address table, the address table to the street_address , the contact
+SQL> table to the telephone table, and the contact table to the rental table with their respective primary
+SQL> and foreign key column values. Primary and foreign key columns share the same column name with one
+SQL> exception. The customer_id foreign key column of the rental table points to the contact_id primary
+SQL> key of the contact table and the join to the rental table should be an outer join that lets you filter rows
+SQL> where the customer_id value is null.
+SQL> 
+SQL> *********************************************/
+SQL> COL last_name	FORMAT A12 HEADING "Last Name"
+SQL> COL account_number FORMAT A10 HEADING "Account|Number"
+SQL> COL c_address	FORMAT A24 HEADING "Address"
+SQL> COL telephone	FORMAT A14 HEADING "Telephone"
+SQL> SELECT DISTINCT last_name, member.account_number,
+  2  street_address.street_address || chr(10) || address.city || ',' || address.state_province || ' ' || address.postal_code AS
+  3  c_address, '(' || telephone.area_code || ')' || telephone.telephone_number  AS Telephone
+  4  FROM member
+  5  INNER JOIN contact ON contact.member_id = member.member_id
+  6  INNER JOIN address ON contact.contact_id = address.contact_id
+  7  INNER JOIN street_address ON address.address_id = street_address.address_id
+  8  INNER JOIN telephone ON (contact.contact_id = telephone.contact_id AND
+  9  address.address_id = telephone.address_id)
+ 10  LEFT JOIN rental ON contact.contact_id = rental.customer_id
+ 11  GROUP BY last_name,member.account_number,street_address.street_address, address.city, address.state_province, address.postal_code, telephone.area_code,telephone.telephone_number
+ 12  HAVING COUNT(rental.customer_id) = 0
+ 13  ORDER BY last_name;
+
+             Account                                                            
+Last Name    Number     Address                  Telephone                      
+------------ ---------- ------------------------ --------------                 
+Clinton      R11-514-34 118 South 9th East       (801)423-1234                  
+                        Provo,Utah 84606                                        
+                                                                                
+Gretelz      R11-514-36 2118 South 7th East      (801)423-1236                  
+                        Provo,Utah 84606                                        
+                                                                                
+Moss         R11-514-35 1218 South 10th East     (801)423-1235                  
+                        Provo,Utah 84606                                        
+                                                                                
+Royal        R11-514-37 2228 South 14th East     (801)423-1237                  
+                        Provo,Utah 84606                                        
+                                                                                
+Smith        R11-514-38 333 North 2nd East       (801)423-1238                  
+                        Spanish Fork,Utah 84606                                 
+                                                                                
+
+5 rows selected.
+
+SQL> 
+SQL> 
+SQL> /***********************************************
+SQL> Step 10
+SQL> Join the member table to the contact table, the contact table to the address table, the address table to
+SQL> the street_address , the contact table to the telephone table, the contact table to the rental table,
+SQL> the rental table to the rental_item table, and the rental_item table to the item table with their respective
+SQL> primary and foreign key column values. The exception for foreign key naming is the customer_id,
+SQL> which is an overriding name for the contact_id that the foreign key references.
+SQL> Filter the result set in the WHERE clause by using a wildcard string match that finds either 'Stir Wars'
+SQL> or 'Star Wars' followed by any set of string literal values.
+SQL> 
+SQL> ***********************************************/
+SQL> COL last_name	FORMAT A12 HEADING "Last Name"
+SQL> COL account_number FORMAT A10 HEADING "Account|Number"
+SQL> COL c_address	FORMAT A24 HEADING "Address"
+SQL> COL telephone	FORMAT A14 HEADING "Telephone"
+SQL> SELECT DISTINCT contact.last_name, member.account_number,'(' || telephone.area_code || ')' || telephone.telephone_number|| chr(10) ||
+  2  street_address.street_address || chr(10) ||
+  3  address.city || ',' || address.state_province || ' ' || address.postal_code AS
+  4  c_address, item.item_title
+  5  FROM (((((((contact
+  6  INNER JOIN member ON contact.member_id = member.member_id)
+  7  INNER JOIN address ON contact.contact_id = address.contact_id)
+  8  INNER JOIN street_address ON address.address_id = street_address.address_id)
+  9  INNER JOIN telephone ON contact.contact_id = telephone.contact_id)
+ 10  INNER JOIN rental ON contact.contact_id = rental.customer_id)
+ 11  INNER JOIN rental_item ON rental.rental_id = rental_item.rental_id)
+ 12  INNER JOIN item ON rental_item.rental_item_id = item.item_id)
+ 13  WHERE item.item_title LIKE 'Stir Wars%' OR item.item_title LIKE 'Star Wars%';
+
+             Account                                                            
+Last Name    Number     Address                  Item Title                     
+------------ ---------- ------------------------ ------------------------------ 
+Vizquel      B293-71446 (408)222-2222            Star Wars I                    
+                        12 El Camino Real                                       
+                        San Jose,CA 95192                                       
+                                                                                
+Vizquel      B293-71446 (408)222-2222            Star Wars II                   
+                        12 El Camino Real                                       
+                        San Jose,CA 95192                                       
+                                                                                
+Vizquel      B293-71446 (408)222-2222            Star Wars III                  
+                        12 El Camino Real                                       
+                        San Jose,CA 95192                                       
+                                                                                
+
+3 rows selected.
+
+SQL> 
+SQL> -- ------------------------------------------------------------------
+SQL> -- Enter lab code above.
+SQL> 
+SQL> -- Close log file.
+SQL> SPOOL OFF

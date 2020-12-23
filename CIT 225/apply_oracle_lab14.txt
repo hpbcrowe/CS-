@@ -1,0 +1,244 @@
++--------------------------------------+
+| XDB protocol ports:                  |
+|  XDB is listening for the protocol   |
+|  when the protocol port is non-zero. |
++--------------------------------------+
+
+HTTP Port FTP Port
+--------- --------
+     8080        0
+
+1 row selected.
+
++---------------------------+
+| DAD virtual-path mappings |
++---------------------------+
+
+Virtual Path                     DAD Name
+-------------------------------- --------------------------------
+/apex/*                          APEX
+/db/*                            GENERIC_DAD
+/studentdb/*                     STUDENT_DAD
+
+3 rows selected.
+
++----------------+
+| DAD attributes |
++----------------+
+
+DAD Name     DAD Param                DAD Value
+------------ ------------------------ ----------------------------------------
+APEX         database-username        ANONYMOUS
+             default-page             apex
+             document-table-name      wwv_flow_file_objects$
+             document-path            docs
+             document-procedure       wwv_flow_file_mgr.process_download
+             nls-language             american_america.al32utf8
+             request-validation-funct wwv_flow_epg_include_modules.authorize
+             ion
+
+GENERIC_DAD  database-username        ANONYMOUS
+
+8 rows selected.
+
++---------------------------------------------------+
+| DAD authorization:                                |
+|  To use static authentication of a user in a DAD, |
+|  the DAD must be authorized for the user.         |
++---------------------------------------------------+
+
+DAD Name                         User Name
+-------------------------------- --------------------------------
+GENERIC_DAD                      ANONYMOUS
+STUDENT_DAD                      STUDENT
+
+2 rows selected.
+
++----------------------------+
+| DAD authentication schemes |
++----------------------------+
+
+DAD Name             User Name                        Auth Scheme
+-------------------- -------------------------------- ------------------
+APEX                 ANONYMOUS                        Anonymous
+GENERIC_DAD          ANONYMOUS                        Anonymous
+STUDENT_DAD                                           Dynamic
+
+3 rows selected.
+
++--------------------------------------------------------+
+| ANONYMOUS user status:                                 |
+|  To use static or anonymous authentication in any DAD, |
+|  the ANONYMOUS account must be unlocked.               |
++--------------------------------------------------------+
+
+Database User   Status
+--------------- --------------------
+ANONYMOUS       OPEN
+
+1 row selected.
+
++-------------------------------------------------------------------+
+| ANONYMOUS access to XDB repository:                               |
+|  To allow public access to XDB repository without authentication, |
+|  ANONYMOUS access to the repository must be allowed.              |
++-------------------------------------------------------------------+
+
+Allow repository anonymous access?
+----------------------------------
+true
+
+1 row selected.
+
+
+User altered.
+
+
+User altered.
+
+Element updated.
+
+PL/SQL procedure successfully completed.
+
++--------------------------------------+
+| XDB protocol ports:                  |
+|  XDB is listening for the protocol   |
+|  when the protocol port is non-zero. |
++--------------------------------------+
+
+HTTP Port FTP Port
+--------- --------
+     8080        0
+
+1 row selected.
+
++---------------------------+
+| DAD virtual-path mappings |
++---------------------------+
+
+Virtual Path                     DAD Name
+-------------------------------- --------------------------------
+/apex/*                          APEX
+/db/*                            GENERIC_DAD
+/studentdb/*                     STUDENT_DAD
+
+3 rows selected.
+
++----------------+
+| DAD attributes |
++----------------+
+
+DAD Name     DAD Param                DAD Value
+------------ ------------------------ ----------------------------------------
+APEX         database-username        ANONYMOUS
+             default-page             apex
+             document-table-name      wwv_flow_file_objects$
+             document-path            docs
+             document-procedure       wwv_flow_file_mgr.process_download
+             nls-language             american_america.al32utf8
+             request-validation-funct wwv_flow_epg_include_modules.authorize
+             ion
+
+GENERIC_DAD  database-username        ANONYMOUS
+
+8 rows selected.
+
++---------------------------------------------------+
+| DAD authorization:                                |
+|  To use static authentication of a user in a DAD, |
+|  the DAD must be authorized for the user.         |
++---------------------------------------------------+
+
+DAD Name                         User Name
+-------------------------------- --------------------------------
+GENERIC_DAD                      ANONYMOUS
+STUDENT_DAD                      STUDENT
+
+2 rows selected.
+
++----------------------------+
+| DAD authentication schemes |
++----------------------------+
+
+DAD Name             User Name                        Auth Scheme
+-------------------- -------------------------------- ------------------
+APEX                 ANONYMOUS                        Anonymous
+GENERIC_DAD          ANONYMOUS                        Anonymous
+STUDENT_DAD                                           Dynamic
+
+3 rows selected.
+
++--------------------------------------------------------+
+| ANONYMOUS user status:                                 |
+|  To use static or anonymous authentication in any DAD, |
+|  the ANONYMOUS account must be unlocked.               |
++--------------------------------------------------------+
+
+Database User   Status
+--------------- --------------------
+ANONYMOUS       OPEN
+
+1 row selected.
+
++-------------------------------------------------------------------+
+| ANONYMOUS access to XDB repository:                               |
+|  To allow public access to XDB repository without authentication, |
+|  ANONYMOUS access to the repository must be allowed.              |
++-------------------------------------------------------------------+
+
+Allow repository anonymous access?
+----------------------------------
+true
+
+1 row selected.
+
+
+PL/SQL procedure successfully completed.
+
+
+PL/SQL procedure successfully completed.
+
+
+PL/SQL procedure successfully completed.
+
+
+DAD Name             DAD Param
+-------------------- ------------------------
+DAD Value
+----------------------------------------
+APEX                 role-link
+anonymousServletRole
+
+                     role-name
+anonymousServletRole
+
+GENERIC_DAD          role-name
+anonymousServletRole
+
+                     role-link
+anonymousServletRole
+
+STUDENT_DAD          role-link
+authenticatedUser
+
+                     role-name
+authenticatedUser
+
+
+6 rows selected.
+
+
+PL/SQL procedure successfully completed.
+
+
+Procedure created.
+
+
+Grant succeeded.
+
+CREATE SYNONYM anonymous.helloworld FOR student.helloworld2
+                         *
+ERROR at line 1:
+ORA-00955: name is already used by an existing object
+
+

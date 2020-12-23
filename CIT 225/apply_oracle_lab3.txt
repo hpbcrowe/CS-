@@ -1,0 +1,319 @@
+SQL> 
+SQL> -- Enter code below.
+SQL> -- ------------------------------------------------------------------
+SQL> 
+SQL> 
+SQL> /*Step1
+
+                               Item                                             
+                               Release                                          
+Item Title                     Date                                             
+------------------------------ -----------                                      
+RoboCop                        24-JUL-03                                        
+Pirates of the Caribbean       30-JUN-03                                        
+The Chronicles of Narnia       30-JUN-03                                        
+MarioKart                      17-NOV-03                                        
+Splinter Cell                  08-APR-03                                        
+
+5 rows selected.
+
+SQL> Using the following ERD (Entity Relationship Diagram) to write an unfiltered query that returns the
+SP2-0734: unknown command beginning "Using the ..." - rest of line ignored.
+SQL> count of the number of rows in the member table. You do that by selecting the result from the COUNT(*)
+SP2-0734: unknown command beginning "count of t..." - rest of line ignored.
+SQL> function. (HINT: The asterisk as an argument to the COUNT function is literally the count of pointers to
+SP2-0734: unknown command beginning "function. ..." - rest of line ignored.
+SQL> disk storage locations, instead of memory locations.)
+SP2-0734: unknown command beginning "disk stora..." - rest of line ignored.
+SP2-0044: For a list of known commands enter HELP
+and to leave enter EXIT.
+SQL> */
+SP2-0042: unknown command "*/" - rest of line ignored.
+SQL> 
+SQL> SELECT COUNT(*)
+  2  FROM member;
+
+  COUNT(*)                                                                      
+----------                                                                      
+         8                                                                      
+
+1 row selected.
+
+SQL> 
+SQL> /***************************************
+SQL> Step 2
+SQL> Using the following ERD to write a query that returns the last_name column-values with the results of
+SQL> the COUNT(*) function. Assign a column alias of total_names to the result of the COUNT(*) function.
+SQL> Order the return set by the ascending number of last name (non-aggregated) occurrences. (HINT: You
+SQL> need to use a GROUP BY clause when there is one or more aggregated column combined with one or
+SQL> more non-aggregated columns in a SELECT-list. The GROUP BY clause lists the (non-aggregated)
+SQL> last_name column minus any column alias. The ORDER BY clause references the column alias for the
+SQL> COUNT(*) function instead of the COUNT(*) function itself.)
+SQL> ***************************************/
+SQL> 
+SQL> SELECT last_name, COUNT(*) AS total_names
+  2  FROM contact
+  3  GROUP BY last_name
+  4  ORDER BY total_names ASC;
+
+Last Name            TOTAL_NAMES                                                
+-------------------- -----------                                                
+Royal                          1                                                
+Gretelz                        1                                                
+Moss                           1                                                
+Smith                          1                                                
+Clinton                        1                                                
+Vizquel                        2                                                
+Winn                           2                                                
+Sweeney                        3                                                
+
+8 rows selected.
+
+SQL> 
+SQL> /**************************************
+SQL> Step 3
+SQL> Using the following ERD to write a query that returns the item_rating column-values and the results
+SQL> of the COUNT(*) function. Assign a column alias of total_names to the COUNT(*) function call. Filter
+SQL> the results with a WHERE clause. The WHERE clause should filter rows where the item_rating values
+SQL> match any value in the set of 'G', 'PG', or 'NR'. (HINT: You need to use a GROUP BY clause when there
+SQL> is one or more aggregated column combined with one or more non-aggregated columns in a SELECT-list.
+SQL> The GROUP BY clause lists the (non-aggregated) item_rating column minus any column alias. The
+SQL> ORDER BY clause references the column alias for the COUNT(*) function instead of the COUNT(*)
+SQL> function itself
+SQL> **************************************/
+SQL> SELECT item_rating, COUNT(*) AS total_names
+  2  FROM item
+  3  WHERE item_rating = 'G' OR item_rating = 'PG' OR item_rating = 'NR'
+  4  GROUP BY item_rating
+  5  ORDER BY total_names;
+
+Item                                                                            
+Rating       TOTAL_NAMES                                                        
+------------ -----------                                                        
+NR                     1                                                        
+G                      4                                                        
+PG                     7                                                        
+
+3 rows selected.
+
+SQL> 
+SQL> /**************************************
+SQL> Step  4
+SQL> 
+SQL> Using the following ERD to write a query that returns the last_name column-value from the contact
+SQL> table, the account_number and credit_card_number column-values from the member table, and the
+SQL> results of the COUNT(*) function. Assign a column alias of total_names to the COUNT(*) function call.
+SQL> Join the member and contact tables on value matches between the member_id column held by both
+SQL> tables. Use the GROUP BY clause for all non-aggregated columns and sort the result set in descending
+SQL> order by the total_names column value. (HINT: Use the ORDER BY clause to sort on the result of the
+SQL> aggregated column.) Filter the aggregated result set with the HAVING clause. The HAVING clause should
+SQL> return true when the count of non-aggregated rows is greater than 1. (HINT: This can be done by using a
+SQL> HAVING clause that compares the COUNT(*) result greater than 1.)
+SQL> **************************************/
+SQL> SELECT contact.last_name, member.account_number, member.credit_card_number, COUNT(*) AS total_names
+  2  FROM contact
+  3  INNER JOIN member ON contact.member_id = member.member_id
+  4  GROUP BY contact.last_name,member.account_number, member.credit_card_number
+  5  HAVING COUNT(*) > 1
+  6  ORDER BY total_names;
+
+                     Account      Credit                                        
+Last Name            Number       Card Number            TOTAL_NAMES            
+-------------------- ------------ ---------------------- -----------            
+Winn                 B293-71445   1111-2222-3333-4444              2            
+Vizquel              B293-71446   2222-3333-4444-5555              2            
+Sweeney              B293-71447   3333-4444-5555-6666              3            
+
+3 rows selected.
+
+SQL> 
+SQL> /**************************************
+SQL> Step 5
+SQL> Using the following ERD to write an unfiltered query that returns the unique last_name , city, and
+SQL> state_province column-values from a join of the contact and address tables. Join the contact and
+SQL> address tables based on value matches between the contact_id column values held by both tables.
+SQL> (HINT: Use the DISTINCT operator in the SELECT-list to sort row results into a unique set.) Use the
+SQL> ORDER BY clause to sort rows based on the ascending value of the last_name column values.
+SQL> **************************************/
+SQL> SELECT DISTINCT contact.last_name, address.city, address.state_province
+  2  FROM contact
+  3  INNER JOIN address ON contact.contact_id = address.contact_id
+  4  ORDER BY contact.last_name ASC;
+
+                                  State or                                      
+Last Name            City         Province                                      
+-------------------- ------------ ------------                                  
+Clinton              Provo        Utah                                          
+Gretelz              Provo        Utah                                          
+Moss                 Provo        Utah                                          
+Royal                Provo        Utah                                          
+Smith                Spanish Fork Utah                                          
+Sweeney              San Jose     CA                                            
+Vizquel              San Jose     CA                                            
+Winn                 San Jose     CA                                            
+
+8 rows selected.
+
+SQL> 
+SQL> /***************************************
+SQL>  Step 6
+SQL>  Using the following ERD to write a query that returns the unique last_name , area_code, and
+SQL> telephone_number column-values from the contact and telephone tables. However, there is a trick to
+SQL> this query’s SELECT-list. The trick requires you to format the area_code and telephone_number
+SQL> columns into the concatenated string. The format should be: (999) 999-9999. Assign a telephone
+SQL> column alias to the formatted string. (HINT: Format strings using piped concatenation between the
+SQL> columns and string literals [for the parentheses and dashes]). Join the contact and telephone tables
+SQL> based on value matches between the contact_id column held by both tables. The DISTINCT operator
+SQL> sorts the row into a unique result set composed of all column-values in the SELECT-list. Sort rows based
+SQL> on the ascending alphabetic values of the last_name column.
+SQL> 
+SQL> ***************************************/
+SQL> SELECT DISTINCT contact.last_name, CONCAT(CONCAT(CONCAT(CONCAT('(',telephone.area_code),')'),' '), telephone.telephone_number)
+  2  AS telphone
+  3  FROM contact
+  4  INNER JOIN telephone
+  5  ON contact.contact_id = telephone.contact_id
+  6  ORDER BY contact.last_name ASC;
+
+Last Name            TELPHONE                                                   
+-------------------- -------------------                                        
+Clinton              (801) 423-1234                                             
+Gretelz              (801) 423-1236                                             
+Moss                 (801) 423-1235                                             
+Royal                (801) 423-1237                                             
+Smith                (801) 423-1238                                             
+Sweeney              (408) 333-3333                                             
+Vizquel              (408) 222-2222                                             
+Winn                 (408) 111-1111                                             
+
+8 rows selected.
+
+SQL> 
+SQL> /***************************************
+SQL> Step 7
+SQL> Using the following ERD to write a query that returns the common_lookup_id,
+SQL> common_lookup_context, common_lookup_type, and common_lookup_meaning column values from
+SQL> the common_lookup table. Filter the result set on the common_lookup_type column-value that matches
+SQL> any of the following set of values: 'BLU-RAY', 'DVD_FULL_SCREEN', or 'DVD_WIDE_SCREEN'. (HINT:
+SQL> Use an IN comparison operator in the WHERE clause.) Sort the return set of rows based on the ascending
+SQL> common_lookup_type column’s values.
+SQL> ***************************************/
+SQL> COL common_lookup_context FORMAT A12 HEADING "Common|Lookup|Context"
+SQL> COL common_lookup_type FORMAT A22 HEADING "Common|Lookup Type"
+SQL> SELECT common_lookup_id,common_lookup_context,common_lookup_type,common_lookup_meaning
+  2  FROM common_lookup
+  3  WHERE common_lookup_type IN ('BLU-RAY','DVD_FULL_SCREEN','DVD_WIDE_SCREEN')
+  4  ORDER BY common_lookup_type ASC;
+
+ MEMBER Common                                                                  
+ LOOKUP Lookup       Common                                                     
+   ID # Context      Lookup Type            Item Description                    
+------- ------------ ---------------------- --------------------                
+   1015 ITEM         BLU-RAY                Blu-ray                             
+   1010 ITEM         DVD_FULL_SCREEN        DVD: Full Screen                    
+   1011 ITEM         DVD_WIDE_SCREEN        DVD: Wide Screen                    
+
+3 rows selected.
+
+SQL> 
+SQL> 
+SQL> /**************************************
+SQL> Step 8
+SQL> Using the following ERD to write a query that returns the item_title and item_rating column-values
+SQL> from the item table after joining the item and rental_item tables. Join the two tables on the matching
+SQL> item_id column-values found in each of the tables. This query uses a WHERE clause to match the
+SQL> item_type column’s value with one or more of the results from a scalar subquery. Use an IN operator
+SQL> with the subquery and order the query’s results by the ascending value of the item_title column value.
+SQL> The subquery selects the common_lookup_id column-value from the common_lookup table where the
+SQL> column’s value of the common_lookup_type column matches any of the values in the set of: 'BLU-RAY',
+SQL> 'DVD_FULL_SCREEN', and 'DVD_WIDE_SCREEN'. (HINT: You actually wrote this subquery in Step #7
+SQL> but it returns four columns. You can use the solution to Step #7 as the starting point for a subquery by
+SQL> removing the three unnecessary columns from original.)
+SQL> **************************************/
+SQL> SELECT item.item_title, item.item_rating
+  2  FROM item
+  3  INNER JOIN rental_item
+  4  ON item.item_id = rental_item.item_id
+  5  WHERE item.item_type = ANY(
+  6  SELECT common_lookup_id
+  7  FROM common_lookup
+  8  WHERE common_lookup_type IN ('BLU-RAY','DVD_FULL_SCREEN','DVD_WIDE_SCREEN')
+  9  )
+ 10  ORDER BY item.item_title ASC;
+
+                               Item                                             
+Item Title                     Rating                                           
+------------------------------ ------------                                     
+Camelot                        G                                                
+Hook                           PG                                               
+I Remember Mama                NR                                               
+Star Wars I                    PG                                               
+Star Wars II                   PG                                               
+Star Wars III                  PG13                                             
+The Hunt for Red October       PG                                               
+
+7 rows selected.
+
+SQL> 
+SQL> /*************************************
+SQL> Step 9
+SQL> Using the following ERD to write a query that returns the common_lookup_id,
+SQL> common_lookup_context, common_lookup_type, and common_lookup_meaning columns from the
+SQL> common_lookup table; and the count of the credit_card_type column values from the member table.
+SQL> Assign credit_cards as the column alias to the count of the credit_card_type column values. Join
+SQL> the member and common_lookup tables by matching the credit_card_type column from the member
+SQL> table and common_lookup_id column from the common_lookup table. Filter the result set by finding the
+SQL> common_lookup_type column-values that match one of the following list of values: 'DISCOVER_CARD',
+SQL> 'MASTER_CARD', and 'VISA_CARD'. Group the result set based on the non-aggregated columns.
+SQL> *************************************/
+SQL> SELECT common_lookup.common_lookup_id, common_lookup.common_lookup_context, common_lookup.common_lookup_type,
+  2  common_lookup.common_lookup_meaning, COUNT(member.credit_card_type) AS credit_cards
+  3  FROM common_lookup
+  4  INNER JOIN member
+  5  ON common_lookup.common_lookup_id = member.credit_card_type
+  6  WHERE common_lookup_type IN ('DISCOVER_CARD','MASTER_CARD','VISA_CARD')
+  7  GROUP BY common_lookup.common_lookup_id, common_lookup.common_lookup_context, common_lookup.common_lookup_type,
+  8  common_lookup.common_lookup_meaning;
+
+ MEMBER Common                                                                  
+ LOOKUP Lookup       Common                                                     
+   ID # Context      Lookup Type            Item Description     CREDIT_CARDS   
+------- ------------ ---------------------- -------------------- ------------   
+   1005 MEMBER       DISCOVER_CARD          Discover Card                   3   
+   1007 MEMBER       VISA_CARD              Visa Card                       5   
+
+2 rows selected.
+
+SQL> 
+SQL> 
+SQL> /*************************************
+SQL> STEP 10
+SQL> *************************************/
+SQL> 
+SQL> 
+SQL> SELECT common_lookup.common_lookup_id, common_lookup.common_lookup_context, common_lookup.common_lookup_type,
+  2  common_lookup.common_lookup_meaning, COUNT(member.credit_card_type) AS credit_cards
+  3  FROM common_lookup
+  4  LEFT JOIN member
+  5  ON common_lookup.common_lookup_id = member.credit_card_type
+  6  WHERE common_lookup_type IN ('DISCOVER_CARD','MASTER_CARD','VISA_CARD')
+  7  GROUP BY common_lookup.common_lookup_id, common_lookup.common_lookup_context, common_lookup.common_lookup_type,
+  8  common_lookup.common_lookup_meaning
+  9  HAVING COUNT(credit_card_type) =0;
+
+ MEMBER Common                                                                  
+ LOOKUP Lookup       Common                                                     
+   ID # Context      Lookup Type            Item Description     CREDIT_CARDS   
+------- ------------ ---------------------- -------------------- ------------   
+   1006 MEMBER       MASTER_CARD            Master Card                     0   
+
+1 row selected.
+
+SQL> 
+SQL> 
+SQL> 
+SQL> -- ------------------------------------------------------------------
+SQL> -- Enter lab code above.
+SQL> 
+SQL> -- Close log file.
+SQL> SPOOL OFF

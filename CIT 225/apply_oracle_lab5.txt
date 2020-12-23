@@ -1,0 +1,613 @@
+SQL> 
+SQL> -- Enter code below.
+SQL> -- ------------------------------------------------------------------
+SQL> /**********************************************
+SQL> step 1 Using the following ERD, write a query (also known as a SELECT statement) that returns the unique
+SQL> system_user_id column-value from the system_user table where the system_user_name columnvalue in the table is the 'DBA1' string. A query that finds the surrogate key by using the natural key is
+SQL> called a scalar query. You typically use scalar queries as subqueries to discover a primary key and use it
+SQL> as a foreign key value.
+SQL> ***********************************************/
+SQL> COL system_user_id FORMAT 9999 HEADING "System|User|ID #"
+SQL> SELECT DISTINCT system_user_id
+  2  FROM system_user
+  3  WHERE system_user_name = 'DBA1';
+
+System                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                  
+  User                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                  
+  ID #                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                  
+------                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                  
+  1001                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                  
+
+1 row selected.
+
+SQL> 
+SQL> /************************************************
+SQL> step 2
+SQL> Using the following ERD, write a query that returns the system_user_id and system_user_name
+SQL> column-values from the system_user table where the system_user_name column-value in the table is
+SQL> the 'DBA1' string. A query that finds the surrogate key by using the natural key is called a scalar query.
+SQL> You typically use scalar queries as subqueries to discover a primary key and use it as a foreign key
+SQL> value.
+SQL> ************************************************/
+SQL> COL system_user_id FORMAT 9999 HEADING "System|User|ID #"
+SQL> COL system_user_name FORMAT A20 HEADING "System|User|Name"
+SQL> 
+SQL> SELECT DISTINCT system_user_id,system_user_name
+  2  FROM system_user
+  3  WHERE system_user_name = 'DBA1';
+
+System System                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                           
+  User User                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                             
+  ID # Name                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                             
+------ --------------------                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                             
+  1001 DBA1                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                             
+
+1 row selected.
+
+SQL> 
+SQL> /******************************************************
+SQL> step 3
+SQL> Using the following ERD, write a query that returns the system_user_id and system_user_name
+SQL> column-values from two copies of the system_user table where in the first copy of the system_user
+SQL> table is given a su1 alias and the second copy is given a su2 alias. Table and view aliases are useful
+SQL> when you want to disambiguate, or tell the difference between, matching column names from two tables.
+SQL> However, they are essential when you want to join one copy of a table to another copy of the same table.
+SQL> This type of join is called a recursive or self-referencing join and it uses one column of the table as a
+SQL> primary key and another as a foreign key. This self-referencing approach exists in the system_user
+SQL> table where the created_by and last_updated_by columns hold copies of a value found in the
+SQL> system_user_id column. These types of foreign keys may hold values that equal the primary key value
+SQL> of the same row, a different row, or two different rows.
+SQL> You will return the system_user_id and system_user_name column-values from two copies of the
+SQL> same table. You must assign the columns different column aliases because two copies of the same
+SQL> column name can’t co-exist in the same SELECT-list. You should use system_user_id1 and
+SQL> system_user_name1 for the first copy of the table, and system_user_id2 and system_user_name2 for
+SQL> the second copy of the table. You will return only one row where the system_user_name column-value
+SQL> of the first copy of the system_user table equals the 'DBA1' string literal value. You will join the two
+SQL> copies of the system_user table on the value match between the created_by column from the first
+SQL> copy with the system_user_id column-value of the second copy of the table.
+SQL> The loop back one-to-many relationship in the following ERD maps two recursive relationships. One
+SQL> maps from the created_by column to the system_user_id column and the other maps the
+SQL> last_updated_by column to the system_user_id column. This query only traverses one of the
+SQL> recursive relationships.
+SQL> ******************************************************/
+SQL> COL system_user_id1 FORMAT 9999 HEADING "System User|ID #"
+SQL> COL system_user_name1 FORMAT A12 HEADING "System User|Name"
+SQL> COL system_user_id2 FORMAT 9999 HEADING "Created By|System User|ID #"
+SQL> COL system_user_name2 FORMAT A12 HEADING "Created By|System User|Name"
+SQL> SELECT su1.system_user_id AS system_user_id1, su1.system_user_name AS system_user_name1, su2.system_user_id AS system_user_id2, su2.system_user_name AS system_user_name2
+  2  FROM system_user su1
+  3  INNER JOIN system_user su2
+  4  ON su1.created_by = su2.system_user_id
+  5  WHERE su1.system_user_name = 'DBA1';
+
+                          Created By Created By                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                         
+System User System User  System User System User                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                        
+       ID # Name                ID # Name                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                               
+----------- ------------ ----------- ------------                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                       
+       1001 DBA1                   1 SYSADMIN                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                           
+
+1 row selected.
+
+SQL> 
+SQL> /*********************************************************
+SQL> step 4
+SQL> Using the following ERD, write a query, that returns three copies of the system_user_id and
+SQL> system_user_name column-values where the system_user_name value in the first copy of the
+SQL> system_user table equals a 'DBA1' string literal value.
+SQL> You will return the system_user_id and system_user_name column-values from two copies of the
+SQL> same table. You must assign the columns different column aliases because two copies of the same
+SQL> column name can’t work. You should use system_user_id1 and system_user_name1 for the first copy
+SQL> of the table, and system_user_id2 and system_user_name2 for the second copy of the table, and
+SQL> system_user_id3 and system_user_name3 for the second copy of the table. You will return only one
+SQL> row where the system_user_name column-value of the first copy of the system_user table equals the
+SQL> 'DBA1' string literal value. You will join the first two copies of the system_user table on the value
+SQL> match between the created_by column from the first copy with the system_user_id column of the
+SQL> second copy of the table, and then join the result set of the first two copies to the third copy of the table
+SQL> by using the last_updated_by column from the first copy with the system_user_id column of the
+SQL> third copy of the table.
+SQL> The loop back one-to-many relationship in the following ERD maps two recursive relationships. One
+SQL> maps from the created_by column to the system_user_id column and the other maps the
+SQL> last_updated_by column to the system_user_id column. This query traverses both of the recursive
+SQL> relationships
+SQL> 
+SQL> *********************************************************/
+SQL> COL system_user_id1 FORMAT 9999 HEADING "System User|ID #"
+SQL> COL system_user_name1 FORMAT A12 HEADING "System User|Name"
+SQL> COL system_user_id2 FORMAT 9999 HEADING "Created By|System User|ID #"
+SQL> COL system_user_name2 FORMAT A12 HEADING "Created By|System User|Name"
+SQL> COL system_user_id3 FORMAT 9999 HEADING "Last|Updated By|System User|ID #"
+SQL> COL system_user_name3 FORMAT A12 HEADING "Last|Updated By|System User|Name"
+SQL> SELECT su1.system_user_id AS system_user_id1, su1.system_user_name As system_user_name1, su2.system_user_id AS system_user_id2, su2.system_user_name AS system_user_name2, su3.system_user_id AS system_user_id3, su3.system_user_name AS system_user_name3
+  2  FROM system_user su1
+  3  INNER JOIN system_user su2 ON su1.created_by = su2.system_user_id
+  4  INNER JOIN system_user su3 ON su1.last_updated_by = su3.system_user_id
+  5  WHERE su1.system_user_name = 'DBA1';
+
+                                                         Last Last                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                      
+                          Created By Created By    Updated By Updated By                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                
+System User System User  System User System User  System User System User                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                               
+       ID # Name                ID # Name                ID # Name                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                      
+----------- ------------ ----------- ------------ ----------- ------------                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                              
+       1001 DBA1                   1 SYSADMIN               1 SYSADMIN                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                  
+
+1 row selected.
+
+SQL> 
+SQL> /***********************************************************
+SQL> step 5
+SQL> Using the following ERD, write a query, that returns three copies of the system_user_id and
+SQL> system_user_name column-values in the SELECT-list. You want to start with the solution to Step #4 and
+SQL> then remove any where clause from the prior solution to see all rows in the system_user table with who
+SQL> created and last updated each row.
+SQL> 
+SQL> ***********************************************************/
+SQL> COL system_user_id1 FORMAT 9999 HEADING "System User|ID #"
+SQL> COL system_user_name1 FORMAT A12 HEADING "System User|Name"
+SQL> COL system_user_id2 FORMAT 9999 HEADING "Created By|System User|ID #"
+SQL> COL system_user_name2 FORMAT A12 HEADING "Created By|System User|Name"
+SQL> COL system_user_id3 FORMAT 9999 HEADING "Last|Updated By|System User|ID #"
+SQL> COL system_user_name3 FORMAT A12 HEADING "Last|Updated By|System User|Name"
+SQL> SELECT su1.system_user_id AS system_user_id1, su1.system_user_name As system_user_name1, su2.system_user_id AS system_user_id2, su2.system_user_name AS system_user_name2, su3.system_user_id AS system_user_id3, su3.system_user_name AS system_user_name3
+  2  FROM system_user su1
+  3  INNER JOIN system_user su2 ON su1.created_by = su2.system_user_id
+  4  INNER JOIN system_user su3 ON su1.last_updated_by = su3.system_user_id;
+
+                                                         Last Last                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                      
+                          Created By Created By    Updated By Updated By                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                
+System User System User  System User System User  System User System User                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                               
+       ID # Name                ID # Name                ID # Name                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                      
+----------- ------------ ----------- ------------ ----------- ------------                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                              
+          1 SYSADMIN               1 SYSADMIN               1 SYSADMIN                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                  
+       1001 DBA1                   1 SYSADMIN               1 SYSADMIN                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                  
+       1002 DBA2                   1 SYSADMIN               1 SYSADMIN                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                  
+
+3 rows selected.
+
+SQL> 
+SQL> /***************************************************************
+SQL> step 6
+SQL> Using the following ERD, write a CREATE statement, that creates a rating_agency table. Before you
+SQL> create the table, you should run the following command to ensure any previous version of the table is
+SQL> dropped:
+SQL> DROP TABLE rating_agency;
+SQL> You should create the table with the following constraints:
+SQL> • A primary key constraint pk_rating_agency on the rating_agency_id column.
+SQL> • A unique constraint uq_rating_agency on the rating_agency_abbr column.
+SQL> • A foreign key constraint fk_rating_agency_1 on the created_by column that references the
+SQL> system_user_id in the system_user table.
+SQL> • A foreign key constraint fk_rating_agency_2 on the last_updated_by column that
+SQL> references the system_user_id in the system_user table.
+SQL> • Not null constraints nn_rating_agency_n (where n is an integer from 1 to 6) on the
+SQL> rating_agency_abbr, rating_agency_name, created_by, creation_date,
+SQL> last_updated_by, last_update_date columns respectfully.
+SQL> Unfortunately, the modeling tool doesn’t allow you to rename the primary key column in design mode.
+SQL> In lieu of PRIMARY, you should use pk_rating_agency for the primary key constraint.
+SQL> ***************************************************************/
+SQL> DROP TABLE rating_agency;
+DROP TABLE rating_agency
+           *
+ERROR at line 1:
+ORA-00942: table or view does not exist 
+
+
+SQL> CREATE TABLE rating_agency
+  2  (rating_agency_id integer CONSTRAINT pk_rating_agency PRIMARY KEY,
+  3  rating_agency_abbr VARCHAR(4) CONSTRAINT nn_rating_agency_1 NOT NULL,
+  4  rating_agency_name VARCHAR(40) CONSTRAINT nn_rating_agency_2 NOT NULL,
+  5  created_by integer CONSTRAINT nn_rating_agency_3 NOT NULL,
+  6  creation_date DATE CONSTRAINT nn_rating_agency_4 NOT NULL,
+  7  last_updated_by integer CONSTRAINT nn_rating_agency_5 NOT NULL,
+  8  last_update_date DATE CONSTRAINT nn_rating_agency_6 NOT NULL,
+  9  CONSTRAINT uq_rating_agency UNIQUE(rating_agency_abbr),
+ 10  CONSTRAINT fk_rating_agency_1 FOREIGN KEY(created_by) REFERENCES system_user(system_user_id),
+ 11  CONSTRAINT fk_rating_agency_2 FOREIGN KEY(last_updated_by) REFERENCES
+ 12  system_user(system_user_id)
+ 13  );
+
+Table created.
+
+SQL> DROP SEQUENCE rating_agency_s1;
+DROP SEQUENCE rating_agency_s1
+              *
+ERROR at line 1:
+ORA-02289: sequence does not exist 
+
+
+SQL> CREATE SEQUENCE rating_agency_s1
+  2  START WITH 1001
+  3  INCREMENT BY 1;
+
+Sequence created.
+
+SQL> 
+SQL> /***********************************************************
+SQL> step 7
+SQL> Use the prior ERD from Step #6 to write the INSERT statement. You exclude the rating_agency_id
+SQL> column from the list of columns because it’s using a SERIAL data type. By excluding it from the list of
+SQL> columns, the database automatically grabs the next value from the associated sequence and consumes it
+SQL> for the INSERT statement. Naturally, it also increments the sequence for the next INSERT statement.
+SQL> 
+SQL> ***********************************************************/
+SQL> INSERT INTO rating_agency
+  2  (rating_agency_id,rating_agency_abbr,rating_agency_name,created_by,creation_date,
+  3  last_updated_by,last_update_date)
+  4  VALUES
+  5  (rating_agency_s1.NEXTVAL,'ESRB','Entertainment Software Rating Board',(SELECT system_user_id FROM system_user WHERE system_user_name = 'DBA2'),SYSDATE,(SELECT system_user_id FROM system_user WHERE system_user_name = 'DBA2'),SYSDATE);
+
+1 row created.
+
+SQL> 
+SQL> INSERT INTO rating_agency
+  2  (rating_agency_id,rating_agency_abbr,rating_agency_name,created_by,creation_date,
+  3  last_updated_by,last_update_date)
+  4  VALUES
+  5  (rating_agency_s1.NEXTVAL,'MPAA','Motion Picture Association of America',(SELECT system_user_id FROM system_user WHERE system_user_name = 'DBA2'),SYSDATE,(SELECT system_user_id FROM system_user WHERE system_user_name = 'DBA2'),SYSDATE);
+
+1 row created.
+
+SQL> COL rating_agency_id FORMAT 9999 HEADING "Rating|Agency|ID #"
+SQL> COL rating_agency_abbr FORMAT A6 HEADING "Rating|Agency|Abbr"
+SQL> COL rating_agency_name FORMAT A40 HEADING "Rating Agency"
+SQL> SELECT rating_agency_id
+  2  , rating_agency_abbr
+  3  , rating_agency_name
+  4  FROM rating_agency;
+
+Rating Rating                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                           
+Agency Agency                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                           
+  ID # Abbr   Rating Agency                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                             
+------ ------ ----------------------------------------                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                  
+  1001 ESRB   Entertainment Software Rating Board                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                       
+  1002 MPAA   Motion Picture Association of America                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                     
+
+2 rows selected.
+
+SQL> 
+SQL> /**************************************************************
+SQL> step 8
+SQL> Using the following ERD, write a CREATE statement, that creates a rating table. Before you create the
+SQL> table, you should run the following command to ensure any previous version of the table is dropped:
+SQL> DROP TABLE rating;
+SQL> You should create the table with the following constraints:
+SQL> • A primary key constraint pk_rating on the rating_id column.
+SQL> • A unique constraint uq_rating on the rating column.
+SQL> • A foreign key constraint fk_rating_1 on the created_by column that references the
+SQL> system_user_id in the system_user table.
+SQL> • A foreign key constraint fk_rating_2 on the last_updated_by column that references the
+SQL> system_user_id in the system_user table.
+SQL> • Not null constraints nn_rating_n (where n is an integer from 1 to 7) on the rating_agency_id,
+SQL> rating, description, created_by, creation_date, last_updated_by, last_update_date
+SQL> columns respectfully.
+SQL> **************************************************************/
+SQL> DROP TABLE rating;
+DROP TABLE rating
+           *
+ERROR at line 1:
+ORA-00942: table or view does not exist 
+
+
+SQL> CREATE TABLE rating
+  2  (rating_id integer CONSTRAINT pk_rating PRIMARY KEY,
+  3   rating_agency_id integer CONSTRAINT nn_rating_1 NOT NULL,
+  4   rating VARCHAR(15) CONSTRAINT nn_rating_2 NOT NULL,
+  5   description VARCHAR(420) CONSTRAINT nn_rating_3 NOT NULL,
+  6   created_by integer CONSTRAINT nn_rating_4 NOT NULL,
+  7   creation_date DATE CONSTRAINT nn_rating_5 NOT NULL,
+  8   last_updated_by integer CONSTRAINT nn_rating_6 NOT NULL,
+  9   last_update_date DATE CONSTRAINT nn_rating_7 NOT NULL,
+ 10   CONSTRAINT uq_rating UNIQUE(rating),
+ 11   CONSTRAINT fk_rating_1 FOREIGN KEY(created_by) REFERENCES system_user(system_user_id),
+ 12   CONSTRAINT fk_rating_2 FOREIGN KEY(last_updated_by) REFERENCES system_user(system_user_id)
+ 13  );
+
+Table created.
+
+SQL> DROP SEQUENCE rating_s1;
+DROP SEQUENCE rating_s1
+              *
+ERROR at line 1:
+ORA-02289: sequence does not exist 
+
+
+SQL> CREATE SEQUENCE rating_s1
+  2  START WITH 1001
+  3  INCREMENT BY 1;
+
+Sequence created.
+
+SQL> --ESRB RATINGS
+SQL> INSERT INTO rating
+  2  (rating_id, rating_agency_id, rating, description, created_by, creation_date,
+  3  last_updated_by, last_update_date)
+  4  VALUES
+  5  (rating_s1.NEXTVAL, (SELECT rating_agency_id FROM rating_agency WHERE
+  6  rating_agency_abbr = 'ESRB'), 'EC', 'Early Childhood', (SELECT system_user_id FROM
+  7  system_user WHERE system_user_name = 'DBA2'), SYSDATE, (SELECT system_user_id FROM
+  8  system_user WHERE system_user_name = 'DBA2'), SYSDATE);
+
+1 row created.
+
+SQL> INSERT INTO rating
+  2  (rating_id, rating_agency_id, rating, description, created_by, creation_date,
+  3  last_updated_by, last_update_date)
+  4  VALUES
+  5  (rating_s1.NEXTVAL, (SELECT rating_agency_id FROM rating_agency WHERE
+  6  rating_agency_abbr = 'ESRB'), 'E', 'Everyone', (SELECT system_user_id FROM
+  7  system_user WHERE system_user_name = 'DBA2'), SYSDATE, (SELECT system_user_id FROM
+  8  system_user WHERE system_user_name = 'DBA2'), SYSDATE);
+
+1 row created.
+
+SQL> INSERT INTO rating
+  2  (rating_id, rating_agency_id, rating, description, created_by, creation_date,
+  3  last_updated_by, last_update_date)
+  4  VALUES
+  5  (rating_s1.NEXTVAL, (SELECT rating_agency_id FROM rating_agency WHERE
+  6  rating_agency_abbr = 'ESRB'), 'E10+', 'Everyone 10+', (SELECT system_user_id FROM
+  7  system_user WHERE system_user_name = 'DBA2'), SYSDATE, (SELECT system_user_id FROM
+  8  system_user WHERE system_user_name = 'DBA2'), SYSDATE);
+
+1 row created.
+
+SQL> INSERT INTO rating
+  2  (rating_id, rating_agency_id, rating, description, created_by, creation_date,
+  3  last_updated_by, last_update_date)
+  4  VALUES
+  5  (rating_s1.NEXTVAL, (SELECT rating_agency_id FROM rating_agency WHERE
+  6  rating_agency_abbr = 'ESRB'), 'T', 'Teen', (SELECT system_user_id FROM system_user
+  7  WHERE system_user_name = 'DBA2'), SYSDATE, (SELECT system_user_id FROM system_user
+  8  WHERE system_user_name = 'DBA2'), SYSDATE);
+
+1 row created.
+
+SQL> INSERT INTO rating
+  2  (rating_id, rating_agency_id, rating, description, created_by, creation_date,
+  3  last_updated_by, last_update_date)
+  4  VALUES
+  5  (rating_s1.NEXTVAL, (SELECT rating_agency_id FROM rating_agency WHERE
+  6  rating_agency_abbr = 'ESRB'), 'M', 'Mature', (SELECT system_user_id FROM
+  7  system_user WHERE system_user_name = 'DBA2'), SYSDATE, (SELECT system_user_id FROM
+  8  system_user WHERE system_user_name = 'DBA2'), SYSDATE);
+
+1 row created.
+
+SQL> INSERT INTO rating
+  2  (rating_id, rating_agency_id, rating, description, created_by, creation_date,
+  3  last_updated_by, last_update_date)
+  4  VALUES
+  5  (rating_s1.NEXTVAL, (SELECT rating_agency_id FROM rating_agency WHERE
+  6  rating_agency_abbr = 'ESRB'), 'AO', 'Adult Only', (SELECT system_user_id FROM
+  7  system_user WHERE system_user_name = 'DBA2'), SYSDATE, (SELECT system_user_id FROM
+  8  system_user WHERE system_user_name = 'DBA2'), SYSDATE);
+
+1 row created.
+
+SQL> INSERT INTO rating
+  2  (rating_id, rating_agency_id, rating, description, created_by, creation_date,
+  3  last_updated_by, last_update_date)
+  4  VALUES
+  5  (rating_s1.NEXTVAL, (SELECT rating_agency_id FROM rating_agency WHERE
+  6  rating_agency_abbr = 'ESRB'), 'RP', 'Rating Pending', (SELECT system_user_id FROM
+  7  system_user WHERE system_user_name = 'DBA2'), SYSDATE, (SELECT system_user_id FROM
+  8  system_user WHERE system_user_name = 'DBA2'), SYSDATE);
+
+1 row created.
+
+SQL> --MPAA RATINGS
+SQL> INSERT INTO rating
+  2  (rating_id, rating_agency_id, rating, description, created_by, creation_date,
+  3  last_updated_by, last_update_date)
+  4  VALUES
+  5  (rating_s1.NEXTVAL, (SELECT rating_agency_id FROM rating_agency WHERE
+  6  rating_agency_abbr = 'MPAA'), 'G', 'General Audiences', (SELECT system_user_id FROM
+  7  system_user WHERE system_user_name = 'DBA2'), SYSDATE, (SELECT system_user_id FROM
+  8  system_user WHERE system_user_name = 'DBA2'), SYSDATE);
+
+1 row created.
+
+SQL> INSERT INTO rating
+  2  (rating_id, rating_agency_id, rating, description, created_by, creation_date,
+  3  last_updated_by, last_update_date)
+  4  VALUES
+  5  (rating_s1.NEXTVAL, (SELECT rating_agency_id FROM rating_agency WHERE
+  6  rating_agency_abbr = 'MPAA'), 'PG', 'Parental Guidance Suggested', (SELECT
+  7  system_user_id FROM system_user WHERE system_user_name = 'DBA2'), SYSDATE, (SELECT
+  8  system_user_id FROM system_user WHERE system_user_name = 'DBA2'), SYSDATE);
+
+1 row created.
+
+SQL> INSERT INTO rating
+  2  (rating_id, rating_agency_id, rating, description, created_by, creation_date,
+  3  last_updated_by, last_update_date)
+  4  VALUES
+  5  (rating_s1.NEXTVAL, (SELECT rating_agency_id FROM rating_agency WHERE
+  6  rating_agency_abbr = 'MPAA'), 'PG-13', 'Parental Guidance Strongly Suggested',
+  7  (SELECT system_user_id FROM system_user WHERE system_user_name = 'DBA2'), SYSDATE,
+  8  (SELECT system_user_id FROM system_user WHERE system_user_name = 'DBA2'), SYSDATE);
+
+1 row created.
+
+SQL> INSERT INTO rating
+  2  (rating_id, rating_agency_id, rating, description, created_by, creation_date,
+  3  last_updated_by, last_update_date)
+  4  VALUES
+  5  (rating_s1.NEXTVAL, (SELECT rating_agency_id FROM rating_agency WHERE
+  6  rating_agency_abbr = 'MPAA'), 'NC-17', 'No One 17 And Under Admitted', (SELECT
+  7  system_user_id FROM system_user WHERE system_user_name = 'DBA2'), SYSDATE, (SELECT
+  8  system_user_id FROM system_user WHERE system_user_name = 'DBA2'), SYSDATE);
+
+1 row created.
+
+SQL> INSERT INTO rating
+  2  (rating_id, rating_agency_id, rating, description, created_by, creation_date,
+  3  last_updated_by, last_update_date)
+  4  VALUES
+  5  (rating_s1.NEXTVAL, (SELECT rating_agency_id FROM rating_agency WHERE
+  6  rating_agency_abbr = 'MPAA'), 'R', 'Restricted', (SELECT system_user_id FROM
+  7  system_user WHERE system_user_name = 'DBA2'), SYSDATE, (SELECT system_user_id FROM
+  8  system_user WHERE system_user_name = 'DBA2'), SYSDATE);
+
+1 row created.
+
+SQL> INSERT INTO rating
+  2  (rating_id, rating_agency_id, rating, description, created_by, creation_date,
+  3  last_updated_by, last_update_date)
+  4  VALUES
+  5  (rating_s1.NEXTVAL, (SELECT rating_agency_id FROM rating_agency WHERE
+  6  rating_agency_abbr = 'MPAA'), 'NR', 'Not Rated', (SELECT system_user_id FROM
+  7  system_user WHERE system_user_name = 'DBA2'), SYSDATE, (SELECT system_user_id FROM
+  8  system_user WHERE system_user_name = 'DBA2'), SYSDATE);
+
+1 row created.
+
+SQL> UPDATE item SET item_rating = 'E' where item_rating = 'Everyone';
+
+4 rows updated.
+
+SQL> UPDATE item SET item_rating = 'T' where item_rating = 'Teen';
+
+3 rows updated.
+
+SQL> UPDATE item SET item_rating = 'M' where item_rating = 'Mature';
+
+1 row updated.
+
+SQL> UPDATE item SET item_rating = 'PG-13' where item_rating = 'PG13';
+
+1 row updated.
+
+SQL> 
+SQL> /********************************************************
+SQL> step 9
+SQL> Using the Step #8 ERD, write an ALTER statement. It should add a new rating_id column to the item
+SQL> table. After adding the rating_id column to the item table, you should use an UPDATE statement to
+SQL> populate the rating_id column with the correct foreign key values. You can use a correlated UPDATE
+SQL> statement to update the rating_id column-values. A correlated UPDATE statement uses a subquery as
+SQL> the right operand in a SET clause, like
+SQL> UPDATE subordinate_table_name t
+SQL> SET t.foreign_key_column =
+SQL>  ( SELECT st.primary_key_column
+SQL>  FROM superior_table_name st
+SQL>  WHERE st.natural_key_column = t.existing_column );
+SQL> ********************************************************/
+SQL> SET LINESIZE 600
+SQL> ALTER TABLE item
+  2  ADD rating_id INT;
+
+Table altered.
+
+SQL> ALTER TABLE item
+  2  ADD CONSTRAINT rating_id FOREIGN KEY(rating_id)
+  3  REFERENCES rating(rating_id);
+
+Table altered.
+
+SQL>  UPDATE item
+  2   SET item.rating_id =
+  3   (SELECT rating.rating_id
+  4   FROM rating
+  5   WHERE item.item_rating =rating.rating);
+
+21 rows updated.
+
+SQL> 
+SQL> COL fk FORMAT 9999 HEADING "Item|------||Foreign|Key #"
+SQL> COL irating FORMAT A15 HEADING "Item|----------||Non-unique|Rating"
+SQL> COL counter FORMAT 9999 HEADING "Item|----------|Count|Non-unique|Rating"
+SQL> COL pk FORMAT 9999 HEADING "Rating|------||Primary|Key #"
+SQL> COL pk_abbr FORMAT A6 HEADING "Rating|Agency|------||Unique|Agency"
+SQL> COL rating FORMAT A15 HEADING "Rating|------||Unique|Rating"
+SQL> SELECT item.rating_id AS fk, item.item_rating AS irating, COUNT(item.item_rating) AS counter, rating.rating_agency_id AS pk, rating_agency.rating_agency_abbr AS
+  2  pk_abbr, rating.rating AS rating
+  3  FROM item
+  4  INNER JOIN rating ON item.rating_id = rating.rating_id
+  5  INNER JOIN rating_agency ON rating.rating_agency_id = rating_agency.rating_agency_id
+  6  GROUP BY item.rating_id, item.item_rating, rating.rating_agency_id, rating_agency.rating_agency_abbr, rating.rating
+  7  ORDER BY item.rating_id;
+
+                                           Rating                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                       
+   Item Item                  Item  Rating Agency Rating                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                
+ ------ ----------      ----------  ------ ------ ------                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                
+                             Count                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                      
+Foreign Non-unique      Non-unique Primary Unique Unique                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                
+  Key # Rating              Rating   Key # Agency Rating                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                
+------- --------------- ---------- ------- ------ ---------------                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                       
+   1002 E                        4    1001 ESRB   E                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                     
+   1004 T                        3    1001 ESRB   T                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                     
+   1005 M                        1    1001 ESRB   M                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                     
+   1008 G                        4    1002 MPAA   G                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                     
+   1009 PG                       7    1002 MPAA   PG                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                    
+   1010 PG-13                    1    1002 MPAA   PG-13                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                 
+   1013 NR                       1    1002 MPAA   NR                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                    
+
+7 rows selected.
+
+SQL> ALTER TABLE item
+  2  MODIFY (rating_id INT CONSTRAINT rating_null NOT NULL);
+
+Table altered.
+
+SQL> ALTER TABLE item
+  2  DROP (item_rating);
+
+Table altered.
+
+SQL> 
+SQL> /*******************************************************
+SQL> step 10
+SQL> Using the following ERD, write the query, to return the results from the member, contact, rental,
+SQL> rental_item, item, rating, and rating_agency tables. The SELECT-list will display:
+SQL> • 1st column should be the account_number from the member table.
+SQL> • 2nd column should return the last_name column from the contact table.
+SQL> • 3rd column should return the item_title column from the item table.
+SQL> • 4th column should return the rating_agency_abbr from the rating_agency table.
+SQL> • 5th column should return the rating column from the rating table.
+SQL> Join the member and contact table by using the member_id column in both tables.
+SQL> Join the result set to the rental table by using the contact_id column from the contact
+SQL> table and the customer_id column from the rental table.
+SQL> • Join the result set to the rental_item table by using the rental_id column from the
+SQL> rental and rental_item tables.
+SQL> • Join the result set to the item table by using the item_id column from the rental_item
+SQL> and item tables.
+SQL> • Join the result set to the rating table by using the rating_id column from the item and
+SQL> rating tables.
+SQL> • Join the result set to the rating_agency table by using the rating_agency_id column
+SQL> from the rating and rating_agency tables.
+SQL> *******************************************************/
+SQL> COL account_number FORMAT A10 HEADING "Account|Number"
+SQL> COL last_name FORMAT A10 HEADING "Last Name"
+SQL> COL item_title FORMAT A24 HEADING "Item Title"
+SQL> COL rating_agency_abbr FORMAT A6 HEADING "Rating|Agency|Abbr"
+SQL> COL rating FORMAT A10 HEADING "Rating"
+SQL> SELECT member.account_number, contact.last_name, item.item_title, rating_agency.rating_agency_abbr, rating.rating
+  2  FROM member
+  3  INNER JOIN contact ON member.member_id = contact.member_id
+  4  INNER JOIN rental ON contact.contact_id = rental.customer_id
+  5  INNER JOIN rental_item ON rental.rental_id = rental_item.rental_id
+  6  INNER JOIN item ON rental_item.item_id = item.item_id
+  7  INNER JOIN rating ON item.rating_id = rating.rating_id
+  8  INNER JOIN rating_agency ON rating.rating_agency_id = rating_agency.rating_agency_id;
+
+                                               Rating                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                   
+Account                                        Agency                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                   
+Number     Last Name  Item Title               Abbr   Rating                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                            
+---------- ---------- ------------------------ ------ ----------                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                        
+B293-71445 Winn       RoboCop                  ESRB   M                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                 
+B293-71447 Sweeney    Cars                     ESRB   E                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                 
+B293-71446 Vizquel    I Remember Mama          MPAA   NR                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                
+B293-71446 Vizquel    Star Wars III            MPAA   PG-13                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                             
+B293-71445 Winn       The Hunt for Red October MPAA   PG                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                
+B293-71446 Vizquel    Star Wars I              MPAA   PG                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                
+B293-71446 Vizquel    Star Wars II             MPAA   PG                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                
+B293-71447 Sweeney    Hook                     MPAA   PG                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                
+B293-71446 Vizquel    Camelot                  MPAA   G                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                 
+
+9 rows selected.
+
+SQL> 
+SQL> 
+SQL> -----------------------------------------------------------------
+SQL> -- Enter lab code above.
+SQL> 
+SQL> -- Close log file.
+SQL> SPOOL OFF
