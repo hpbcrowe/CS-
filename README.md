@@ -1,4 +1,4 @@
-# CS-225
+# CS- CIT 225
 
 Assignments for Database Design and Development
 
